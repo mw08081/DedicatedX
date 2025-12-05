@@ -31,11 +31,11 @@ public:
 	void OnRep_CurrentHP();
 
 public:
-	UPROPERTY(ReplicatedUsing = OnRep_CurrentHP)
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentHP, BlueprintReadOnly)
 	float CurrentHP;
 
 
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, BlueprintReadOnly)
 	float MaxHP;
 
 	FOnCurrentHPChangedDelegate OnCurrentHPChanged;
