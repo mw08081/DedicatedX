@@ -107,8 +107,6 @@ void ADXGameModeBase::OnMainTimerElapsed()
 		if (DXGameState->AlivePlayerControllerCount <= 1)
 		{
 			DXGameState->MatchState = EMatchState::Ending;
-
-			//AlivePlayerControllers[0]->ClientRPCShowGameResultWidget(1);
 			OnGameEnd();
 		}
 
@@ -175,7 +173,6 @@ void ADXGameModeBase::OnGameEnd()
 		else
 		{
 			//경찰은 패배 나머지는 승리
-			LastPlayerController->ClientRPCShowGameResultWidget(1);
 			for (auto DeadPlayerController : DeadPlayerControllers)
 			{
 				if (DeadPlayerController->GetPlayerState<ADXPlayerState>()->bIsCop)
@@ -186,6 +183,10 @@ void ADXGameModeBase::OnGameEnd()
 				{
 					DeadPlayerController->ClientRPCShowGameResultWidget(1);
 				}
+			}
+			for (auto AlivePlayerController : AlivePlayerControllers)
+			{
+				AlivePlayerController->ClientRPCShowGameResultWidget(1);
 			}
 		}
 	}
@@ -211,8 +212,21 @@ void ADXGameModeBase::OnCharacterDead(ADXPlayerController* InController)
 		return;
 	}
 
-	InController->ClientRPCShowGameResultWidget(AlivePlayerControllers.Num());
+	ADXPlayerState* DXPlayerState = InController->GetPlayerState<ADXPlayerState>();
+	ADXGameStateBase* DXGameState = GetGameState<ADXGameStateBase>();
 
-	AlivePlayerControllers.Remove(InController);
-	DeadPlayerControllers.Add(InController);
+	if (IsValid(DXPlayerState) == true && IsValid(DXGameState) == true)
+	{
+		InController->ClientRPCShowGameResultWidget(AlivePlayerControllers.Num());
+
+		AlivePlayerControllers.Remove(InController);
+		DeadPlayerControllers.Add(InController);
+
+
+		if (DXPlayerState->bIsCop == true && DXGameState->MatchState != EMatchState::Ending)
+		{
+			DXGameState->MatchState = EMatchState::Ending;
+			OnGameEnd();
+		}
+	}
 }
