@@ -10,6 +10,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class UInputMappingContext;
 class UInputAction;
+class UDXStatusComponent;
 
 UCLASS()
 class DEDICATEDX_API ADXPlayerCharacter : public ACharacter
@@ -41,6 +42,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DXPlayerCharacter|Components")
 	TObjectPtr<UCameraComponent> Camera;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DXPlayerCharacter|Components")
+	TObjectPtr<UDXStatusComponent> StatusComponent;
 
 #pragma endregion
 
@@ -95,6 +99,9 @@ public:
 	UFUNCTION(Client, Unreliable)
 	void ClientRPCPlayMeleeAttackMontage(ADXPlayerCharacter* InTargetCharacter);
 
+	UFUNCTION()
+	void OnDeath();
+
 private:
 	void DrawDebugMeleeAttack(const FColor& DrawColor, FVector TraceStart, FVector TraceEnd, FVector Forward);
 
@@ -110,5 +117,7 @@ protected:
 	float MinAllowedTimeForMeleeAttack;
 
 #pragma endregion
+
+
 
 };

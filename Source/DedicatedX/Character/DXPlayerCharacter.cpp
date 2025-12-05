@@ -17,6 +17,10 @@
 
 #include "GameFramework/GameStateBase.h"
 #include "EngineUtils.h"
+#include "Game/DXGameStateBase.h"
+#include "Component/DXStatusComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Player/DxPlayerController.h"
 
 ADXPlayerCharacter::ADXPlayerCharacter()
 	: bCanAttack(true)
@@ -43,6 +47,8 @@ ADXPlayerCharacter::ADXPlayerCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->bUsePawnControlRotation = false;
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+
+	StatusComponent = CreateDefaultSubobject<UDXStatusComponent>(TEXT("StatusComponent"));
 }
 
 
@@ -81,6 +87,8 @@ void ADXPlayerCharacter::BeginPlay()
 	{
 		MeleeAttackMontagePlayTime = MeleeAttackMontage->GetPlayLength();
 	}
+
+	StatusComponent->OnOutOfCurrentHP.AddUObject(this, &ThisClass::OnDeath);
 }
 
 void ADXPlayerCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -139,9 +147,18 @@ void ADXPlayerCharacter::HandleMeleeAttackInput(const FInputActionValue& InValue
 
 float ADXPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	UKismetSystemLibrary::PrintString(GetWorld(), FString::Printf(TEXT("TakeDamage: %f"), DamageAmount), true, true, FLinearColor::Red, 5.f);
+	float CurrentHP = StatusComponent->GetCurrentHP();
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
+	ADXGameStateBase* DXGameState = Cast<ADXGameStateBase>(UGameplayStatics::GetGameState(this));
+	if (IsValid(DXGameState) == true && DXGameState->MatchState == EMatchState::Playing)
+	{
+		StatusComponent->ApplyDamage(ActualDamage);
+	}
 
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	UKismetSystemLibrary::PrintString(GetWorld(), FString::Printf(TEXT("TakeDamage: %f(%f -> %f)"), DamageAmount, CurrentHP, StatusComponent->GetCurrentHP()), true, true, FLinearColor::Red, 5.f);
+
+	return ActualDamage;
 }
 
 void ADXPlayerCharacter::CheckMeleeAttackHit()
@@ -280,5 +297,14 @@ void ADXPlayerCharacter::PlayMeleeAttackMontage()
 	{
 		AnimInstance->StopAllMontages(0.f);
 		AnimInstance->Montage_Play(MeleeAttackMontage);
+	}
+}
+
+void ADXPlayerCharacter::OnDeath()
+{
+	ADXPlayerController* PlayerController = GetController<ADXPlayerController>();
+	if (IsValid(PlayerController) == true && HasAuthority() == true)
+	{
+		PlayerController->OnCharacterDead();
 	}
 }
