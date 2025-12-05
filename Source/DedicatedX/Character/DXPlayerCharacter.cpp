@@ -21,6 +21,7 @@
 #include "Component/DXStatusComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/DxPlayerController.h"
+#include "Player/DXPlayerState.h"
 
 ADXPlayerCharacter::ADXPlayerCharacter()
 	: bCanAttack(true)
@@ -133,13 +134,17 @@ void ADXPlayerCharacter::HandleLookInput(const FInputActionValue& InValue)
 
 void ADXPlayerCharacter::HandleMeleeAttackInput(const FInputActionValue& InValue)
 {
-	if (true == bCanAttack && GetCharacterMovement()->IsFalling() == false)
+	ADXPlayerState* DXPlayerState = GetPlayerState<ADXPlayerState>();
+	if (IsValid(DXPlayerState) == true)
 	{
-		ServerRPCMeleeAttack();
-
-		if (HasAuthority() == false && IsLocallyControlled() == true)
+		if (DXPlayerState->bIsCop == true && true == bCanAttack && GetCharacterMovement()->IsFalling() == false)
 		{
-			PlayMeleeAttackMontage();
+			ServerRPCMeleeAttack();
+
+			if (HasAuthority() == false && IsLocallyControlled() == true)
+			{
+				PlayMeleeAttackMontage();
+			}
 		}
 	}
 }
@@ -205,7 +210,7 @@ void ADXPlayerCharacter::ServerRPCPerformMeleeHit_Implementation(ACharacter* InD
 {
 	if (IsValid(InDamagedCharacters) == true)
 	{
-		const float MeleeAttackDamage = 10.f;
+		const float MeleeAttackDamage = 30.f;
 		FDamageEvent DamageEvent;
 		InDamagedCharacters->TakeDamage(MeleeAttackDamage, DamageEvent, GetController(), this);
 	}

@@ -13,5 +13,15 @@ UCLASS()
 class DEDICATEDX_API ADXPlayerState : public APlayerState
 {
 	GENERATED_BODY()
+
+public:
+	ADXPlayerState();
+	virtual void BeginPlay() override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+public:
+	UPROPERTY(Replicated)
+	bool bIsCop;
 	
 };

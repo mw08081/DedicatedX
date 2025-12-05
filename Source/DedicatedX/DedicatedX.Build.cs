@@ -12,6 +12,8 @@ public class DedicatedX : ModuleRules
             "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput",
 
             "UMG", "Slate", "SlateCore",
+
+            "NavigationSystem",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

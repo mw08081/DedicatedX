@@ -4,7 +4,9 @@
 #include "Game/DXGameModeBase.h"
 #include "Player/DXPlayerController.h"
 #include "Game/DXGameStateBase.h"
+#include "Math/UnrealMathUtility.h" 
 #include "Kismet/GameplayStatics.h"
+#include "Player/DXPlayerState.h"
 
 void ADXGameModeBase::PostLogin(APlayerController* NewPlayer)
 {
@@ -86,6 +88,7 @@ void ADXGameModeBase::OnMainTimerElapsed()
 		{
 			NotificationString = FString::Printf(TEXT(""));
 
+			SetPlayerRole();
 			DXGameState->MatchState = EMatchState::Playing;
 		}
 
@@ -145,6 +148,13 @@ void ADXGameModeBase::OnMainTimerElapsed()
 	default:
 		break;
 	}
+}
+
+void ADXGameModeBase::SetPlayerRole()
+{
+	int32 Idx = FMath::RandHelper(AlivePlayerControllers.Num());
+	ADXPlayerState* DXPlayerState = AlivePlayerControllers[Idx]->GetPlayerState<ADXPlayerState>();
+	DXPlayerState->bIsCop = true;
 }
 
 void ADXGameModeBase::NotifyToAllPlayer(const FString& NotificationString)

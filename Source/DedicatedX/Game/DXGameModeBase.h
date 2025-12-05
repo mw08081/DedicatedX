@@ -51,6 +51,7 @@ protected:
 public:
 	void OnCharacterDead(ADXPlayerController* InController);
 private:
+	void SetPlayerRole();
 	void NotifyToAllPlayer(const FString& NotificationString);
 
 };
