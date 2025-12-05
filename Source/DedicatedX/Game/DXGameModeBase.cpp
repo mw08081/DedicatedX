@@ -108,7 +108,8 @@ void ADXGameModeBase::OnMainTimerElapsed()
 		{
 			DXGameState->MatchState = EMatchState::Ending;
 
-			AlivePlayerControllers[0]->ClientRPCShowGameResultWidget(1);
+			//AlivePlayerControllers[0]->ClientRPCShowGameResultWidget(1);
+			OnGameEnd();
 		}
 
 		break;
@@ -155,6 +156,39 @@ void ADXGameModeBase::SetPlayerRole()
 	int32 Idx = FMath::RandHelper(AlivePlayerControllers.Num());
 	ADXPlayerState* DXPlayerState = AlivePlayerControllers[Idx]->GetPlayerState<ADXPlayerState>();
 	DXPlayerState->bIsCop = true;
+}
+
+void ADXGameModeBase::OnGameEnd()
+{
+	ADXPlayerController* LastPlayerController = AlivePlayerControllers[0];
+	ADXPlayerState* LastPlayerState = LastPlayerController->GetPlayerState<ADXPlayerState>();
+	if (IsValid(LastPlayerState) == true)
+	{
+		if (LastPlayerState->bIsCop == true)
+		{
+			LastPlayerController->ClientRPCShowGameResultWidget(1);
+			for (auto DeadPlayerController : DeadPlayerControllers)
+			{
+				DeadPlayerController->ClientRPCShowGameResultWidget(-1);
+			}
+		}
+		else
+		{
+			//경찰은 패배 나머지는 승리
+			LastPlayerController->ClientRPCShowGameResultWidget(1);
+			for (auto DeadPlayerController : DeadPlayerControllers)
+			{
+				if (DeadPlayerController->GetPlayerState<ADXPlayerState>()->bIsCop)
+				{
+					DeadPlayerController->ClientRPCShowGameResultWidget(-1);
+				}
+				else
+				{
+					DeadPlayerController->ClientRPCShowGameResultWidget(1);
+				}
+			}
+		}
+	}
 }
 
 void ADXGameModeBase::NotifyToAllPlayer(const FString& NotificationString)

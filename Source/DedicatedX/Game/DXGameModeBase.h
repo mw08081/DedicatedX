@@ -36,9 +36,9 @@ protected:
 	TArray<TObjectPtr<ADXPlayerController>> DeadPlayerControllers;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 WaitingTime = 15;
+	int32 WaitingTime = 5;
 
-	int32 RemainWaitingTimeForPlaying = 15;
+	int32 RemainWaitingTimeForPlaying = 5;
 
 	int32 MinimumPlayerCountForPlaying = 2;
 
@@ -50,8 +50,11 @@ protected:
 
 public:
 	void OnCharacterDead(ADXPlayerController* InController);
+	
 private:
 	void SetPlayerRole();
+	void OnGameEnd();
 	void NotifyToAllPlayer(const FString& NotificationString);
+
 
 };

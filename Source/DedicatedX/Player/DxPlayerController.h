@@ -45,5 +45,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<class UUW_GameResult> GameResultUIClass;
 
+	UPROPERTY()
+	TObjectPtr<class UUW_GameResult> GameResultUIInstance;
+
 #pragma endregion
 };

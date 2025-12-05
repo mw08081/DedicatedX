@@ -58,26 +58,27 @@ void ADXPlayerController::ClientRPCShowGameResultWidget_Implementation(int32 InR
 	{
 		if (IsValid(GameResultUIClass) == true)
 		{
-			UUW_GameResult* GameResultUI = CreateWidget<UUW_GameResult>(this, GameResultUIClass);
-			if (IsValid(GameResultUI) == true)
+			if (IsValid(GameResultUIInstance) == false)
 			{
-				GameResultUI->AddToViewport(3);
-
-				FString GameResultString = FString::Printf(TEXT("%s"), InRanking == 1 ? TEXT("Winner!") : TEXT("Looser..."));
-				GameResultUI->ResultText->SetText(FText::FromString(GameResultString));
-
-				FString RankingString = FString::Printf(TEXT("#%02d"), InRanking);
-				GameResultUI->RankingText->SetText(FText::FromString(RankingString));
-
-				FInputModeUIOnly Mode;
-				Mode.SetWidgetToFocus(GameResultUI->GetCachedWidget());
-				SetInputMode(Mode);
-
-				bShowMouseCursor = true;
+				GameResultUIInstance = CreateWidget<UUW_GameResult>(this, GameResultUIClass);
+				GameResultUIInstance->AddToViewport(3);
 			}
+
+			FString GameResultString = FString::Printf(TEXT("%s"), (InRanking == 1) ? (TEXT("Winner!")) : (InRanking == -1) ? (TEXT("Looser...")) : (TEXT("Wait for End...")));
+			GameResultUIInstance->ResultText->SetText(FText::FromString(GameResultString));
+
+			//FString RankingString = FString::Printf(TEXT("#%02d"), InRanking);
+			//GameResultUIInstance->RankingText->SetText(FText::FromString(RankingString));
+
+			FInputModeUIOnly Mode;
+			Mode.SetWidgetToFocus(GameResultUIInstance->GetCachedWidget());
+			SetInputMode(Mode);
+
+			bShowMouseCursor = true;
 		}
 	}
 }
+
 
 void ADXPlayerController::ClientRPCReturnToTitle_Implementation()
 {

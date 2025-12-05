@@ -22,6 +22,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Player/DxPlayerController.h"
 #include "Player/DXPlayerState.h"
+#include "AI/DXAIController.h"
 
 ADXPlayerCharacter::ADXPlayerCharacter()
 	: bCanAttack(true)
@@ -210,9 +211,21 @@ void ADXPlayerCharacter::ServerRPCPerformMeleeHit_Implementation(ACharacter* InD
 {
 	if (IsValid(InDamagedCharacters) == true)
 	{
-		const float MeleeAttackDamage = 30.f;
-		FDamageEvent DamageEvent;
-		InDamagedCharacters->TakeDamage(MeleeAttackDamage, DamageEvent, GetController(), this);
+		AController* InDamagedCharacterController = InDamagedCharacters->GetController();
+
+		if (IsValid(InDamagedCharacterController))
+		{
+			float MeleeAttackSelfDamage = 10.f;
+			float MeleeAttackDamage = 30.f;
+			FDamageEvent DamageEvent;
+			
+			if (InDamagedCharacterController->IsA(AAIController::StaticClass()))
+			{
+				this->TakeDamage(MeleeAttackSelfDamage, DamageEvent, GetController(), this);
+			}
+
+			InDamagedCharacters->TakeDamage(MeleeAttackDamage, DamageEvent, GetController(), this);
+		}
 	}
 }
 
