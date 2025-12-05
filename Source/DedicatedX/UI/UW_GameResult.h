@@ -5,8 +5,8 @@
 #include "Blueprint/UserWidget.h"
 #include "UW_GameResult.generated.h"
 
-class UTextBlock;
 class UButton;
+class UTextBlock;
 
 /**
  *

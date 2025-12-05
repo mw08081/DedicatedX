@@ -49,4 +49,26 @@ public:
 	TObjectPtr<class UUW_GameResult> GameResultUIInstance;
 
 #pragma endregion
+
+
+#pragma region EndGame
+
+public:
+
+	//UFUNCTION(Client, Reliable)
+	//void ClientRPCShowGameResultWidget(int32 InRanking);
+
+	//UFUNCTION(Client, Reliable)
+	//void ClientRPCReturnToTitle();
+
+private:
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget> HUDClass;
+public:
+	UPROPERTY()
+	TObjectPtr<class UUserWidget> HUDInstance;
+
+#pragma endregion
+
 };

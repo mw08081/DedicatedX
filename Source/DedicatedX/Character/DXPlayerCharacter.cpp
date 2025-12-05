@@ -325,4 +325,5 @@ void ADXPlayerCharacter::OnDeath()
 	{
 		PlayerController->OnCharacterDead();
 	}
+	Destroy();
 }

@@ -30,6 +30,14 @@ void ADXPlayerController::BeginPlay()
 			NotificationTextUI->SetVisibility(ESlateVisibility::Visible);
 		}
 
+		if (IsValid(HUDClass))
+		{
+			HUDInstance = CreateWidget<UUserWidget>(this, HUDClass);
+			HUDInstance->AddToViewport(1);
+
+			HUDInstance->SetVisibility(ESlateVisibility::Visible);
+		}
+
 		FInputModeGameOnly Mode;
 		SetInputMode(Mode);
 		bShowMouseCursor = false;

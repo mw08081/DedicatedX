@@ -4,6 +4,12 @@
 #include "Component/DXStatusComponent.h"
 #include "Net/UnrealNetwork.h"
 
+#include "Player/DxPlayerController.h"
+#include "Player/DXPlayerState.h"
+#include "Character/DXPlayerCharacter.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
+
 UDXStatusComponent::UDXStatusComponent()
 	: CurrentHP(30.0f)
 	, MaxHP(30.f)
