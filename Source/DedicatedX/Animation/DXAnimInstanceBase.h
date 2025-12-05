@@ -23,7 +23,7 @@ public:
 
 protected:
 	UPROPERTY()
-	TObjectPtr<ADXPlayerCharacter> OwnerCharacter;
+	TObjectPtr<ACharacter> OwnerCharacter;
 
 	UPROPERTY()
 	TObjectPtr<UCharacterMovementComponent> OwnerCharacterMovementComponent;

@@ -10,7 +10,7 @@ void UDXAnimInstanceBase::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-	OwnerCharacter = Cast<ADXPlayerCharacter>(GetOwningActor());
+	OwnerCharacter = Cast<ACharacter>(GetOwningActor());
 	if (IsValid(OwnerCharacter) == true)
 	{
 		OwnerCharacterMovementComponent = OwnerCharacter->GetCharacterMovement();
@@ -36,6 +36,7 @@ void UDXAnimInstanceBase::AnimNotify_CheckMeleeAttackHit()
 {
 	if (IsValid(OwnerCharacter) == true)
 	{
-		OwnerCharacter->CheckMeleeAttackHit();
+		ADXPlayerCharacter* ADXOwnerPlayerCharacter = Cast<ADXPlayerCharacter>(OwnerCharacter);
+		ADXOwnerPlayerCharacter->CheckMeleeAttackHit();
 	}
 }
