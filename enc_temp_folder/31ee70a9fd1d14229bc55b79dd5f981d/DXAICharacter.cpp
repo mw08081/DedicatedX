@@ -55,6 +55,5 @@ void ADXAICharacter::OnDeath()
 	if (IsValid(AIController) == true && HasAuthority() == true)
 	{
 		AIController->OnCharacterDead();
-		Destroy();
 	}
 }
